@@ -12,7 +12,8 @@ router.post('/bet-records', async (req, res) => {
             user_id,
             bet_amount,
             multiplier,
-            cashout_amount
+            cashout_amount,
+            createdAt: new Date() // Automatically set the creation date
         });
         await newBetRecord.save();
         res.status(201).json(newBetRecord);
@@ -26,7 +27,7 @@ router.get('/bet-records/:user_id', async (req, res) => {
     const user_id = req.params.user_id;
 
     try {
-        const betRecords = await BetRecord.find({ user_id }).sort({ created_at: -1 });
+        const betRecords = await BetRecord.find({ user_id }).sort({ createdAt: -1 });
         res.status(200).json(betRecords);
     } catch (error) {
         res.status(500).json({ error: error.message });

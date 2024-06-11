@@ -2,6 +2,7 @@
 const express = require("express");
 const http = require("http");
 const connectToMongo = require("./db");
+require("dotenv").config(); // Ensure you load environment variables at the top
 const cors = require("cors");
 
 // Import routers
@@ -15,7 +16,7 @@ const setupWebSocket = require("./webSockets/aviatorServer"); // Import WebSocke
 const app = express();
 const port = 5000;
 
-const allowedOrigins = ["https://client-r8jh.onrender.com"];
+const allowedOrigins = ["http://localhost:3000", "http://192.168.1.5:3000"];
 
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
