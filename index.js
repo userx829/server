@@ -1,4 +1,3 @@
-// index.js
 const express = require("express");
 const http = require("http");
 const connectToMongo = require("./db");
@@ -14,9 +13,14 @@ const gameLogicRouter = require('./routes/colorGameLogic'); // Import the game l
 const setupWebSocket = require("./webSockets/aviatorServer"); // Import WebSocket setup function from aviatorServer.js
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000; // Use PORT from environment variables or default to 5000
 
-const allowedOrigins = ["http://localhost:3000", "http://192.168.1.5:3000"];
+// Add your Render frontend URL to the allowed origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.1.5:3000",
+  "https://client-r8jh.onrender.com"
+];
 
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());

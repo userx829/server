@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config(); // Load environment variables from .env file
 
-const mongoURI = process.env.MONGO_URI; // Add your database name here
+const mongoURI = process.env.MONGO_URI;// Add your database name here
 
 async function connectToMongo() {
   try {
