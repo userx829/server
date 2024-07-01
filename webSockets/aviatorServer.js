@@ -1,5 +1,4 @@
 const WebSocket = require("ws");
-
 let initialCountdown = 10; // Initial countdown value
 let countdown = initialCountdown; // Shared countdown
 let countdownInterval; // Interval reference for the shared countdown
@@ -9,27 +8,18 @@ function startCountdown() {
   countdownInterval = setInterval(() => {
     if (countdown === 0) {
       clearInterval(countdownInterval);
-      
-      // Generate a random time and notify all clients
-      const newRandomTime = Math.floor(Math.random() * 30) + 1; // Random time between 1 and 30 seconds
+       const newRandomTime = Math.floor(Math.random() * 30) + 1; // Random time between 1 and 30 seconds
       broadcastToAllClients({ type: "plane-countdown-start", time: newRandomTime });
-
-      // Start the plane countdown for all clients
       startPlaneCountdown(newRandomTime);
-
       return;
     }
-
-    // Broadcast the countdown to all connected clients
     broadcastToAllClients({ type: "countdown-update", time: countdown });
-
     countdown--;
   }, 1000);
 }
 
 function startPlaneCountdown(randomTime) {
   let planecountdown = randomTime;
-
   const planeCountdownInterval = setInterval(() => {
     planecountdown--;
     if (planecountdown <= 1) {
@@ -45,7 +35,7 @@ function startPlaneCountdown(randomTime) {
         startCountdown();
       }, 3000);
     }
-  }, 600);
+  }, 500);
 }
 
 function broadcastToAllClients(message) {
@@ -60,24 +50,12 @@ function broadcastToAllClients(message) {
   });
 }
 
-// Function to send current date to clients
-function sendCurrentDate(client) {
-  const currentDate = new Date().toLocaleString(); // Get current date and time
-  try {
-    client.send(JSON.stringify({ type: "current-date", date: currentDate }));
-  } catch (error) {
-    console.error("Error sending current-date:", error);
-  }
-}
 
 function setupWebSocket(server) {
   // Create WebSocket server
   wss = new WebSocket.Server({ server });
-
   // Start the shared countdown when the server starts
   startCountdown();
-
-  // WebSocket connection handler
   wss.on("connection", function connection(client) {
     console.log("WebSocket connection established");
 
@@ -88,9 +66,6 @@ function setupWebSocket(server) {
     } catch (error) {
       console.error("Error sending countdown-update:", error);
     }
-
-    // Send current date immediately upon connection
-    sendCurrentDate(client);
 
     // WebSocket connection close handler
     client.on("close", () => {
@@ -104,7 +79,7 @@ function setupWebSocket(server) {
 
     // Send a welcome message to the connected client
     try {
-      client.send(JSON.stringify({ type: "welcome", message: "WebSocket connection established" }));
+      client.send("WebSocket connection established");
     } catch (error) {
       console.error("Error sending welcome message:", error);
     }

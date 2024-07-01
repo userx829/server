@@ -1,19 +1,21 @@
 const express = require("express");
 const http = require("http");
 const connectToMongo = require("./db");
-require("dotenv").config();
+require("dotenv").config(); // Ensure you load environment variables at the top
 const cors = require("cors");
-const path = require("path");
 
+// Import routers
 const userRouter = require("./routes/userInfo");
 const pointsRouter = require("./routes/points");
-const betRecordsRouter = require('./routes/betRecords');
-const gameLogicRouter = require('./routes/colorGameLogic');
-const setupWebSocket = require("./webSockets/aviatorServer");
+const betRecordsRouter = require('./routes/betRecords'); // Import the betRecords router
+const gameLogicRouter = require('./routes/colorGameLogic'); // Import the game logic router
+const boxgameLogicRouter = require('./routes/boxGame'); // Import the game logic router
+const setupWebSocket = require("./webSockets/aviatorServer"); // Import WebSocket setup function from aviatorServer.js
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000; // Use PORT from environment variables or default to 5000
 
+// Add your Render frontend URL to the allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.1.5:3000",
@@ -23,22 +25,19 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
+// Mount routers
 app.use("/api", userRouter);
 app.use("/api", pointsRouter);
 app.use('/api', betRecordsRouter);
 app.use('/api', gameLogicRouter);
+app.use('/api', boxgameLogicRouter); // Mount the game logic router
+ // Mount the game logic router
 
-// Serve static assets in production (React frontend)
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
-
+// Create HTTP server
 const server = http.createServer(app);
-setupWebSocket(server);
+
+// Setup WebSocket server using the imported function
+setupWebSocket(server); // Pass the HTTP server to the WebSocket setup function
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
