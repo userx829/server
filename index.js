@@ -22,7 +22,18 @@ const allowedOrigins = [
   "https://client-r8jh.onrender.com"
 ];
 
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Mount routers
@@ -31,7 +42,6 @@ app.use("/api", pointsRouter);
 app.use('/api', betRecordsRouter);
 app.use('/api', gameLogicRouter);
 app.use('/api', boxgameLogicRouter); // Mount the game logic router
- // Mount the game logic router
 
 // Create HTTP server
 const server = http.createServer(app);
